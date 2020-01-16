@@ -1,0 +1,703 @@
+1) Components 
+components is composed of following things
+
+Component = Template   		       +    Classs        	   	+   MetaData
+	    .View Layout		.Code supporting the view	    .Extra Data for Angular
+	    .Created with HTML		.created with typescript	    .Defined with a decorator
+	    .Includes Binding and	.Properties: data
+	     directives			.Methods: logic
+
+
+Component Example--- app.component.ts file
+
+import {Component} from '@angular/core';				// import
+
+@Component({
+	selector:'pm-root',						// MetaData
+	template: `							//Template
+		<div><h1>{{pageTitle}}</h1>				//Template
+			<div> My first Component </div>			//Template
+		</div>							//Template
+		`							//Template
+	})
+
+export class AppComponent {						//
+	pageTitle : string = 'ACME Product Mangement';                 //Class
+}								       //
+
+
+2) Decorators
+
+a) A function that adds metadata to a class, its members or its method arguments
+b) Prfixed with an @
+c) Angular provides built in decorators
+@Component()
+
+3) Bootstraping a component
+
+in index.html we need to map the selector we want to use
+<body>
+	<pm-root></pm-root>
+</body>
+
+4) Defining Angular Module in ----app.module.ts    file
+
+import {NgModule} from '@angular/core'
+import { BrowserModule} from '@angular/platform-browser'
+import {AppComponent} from './app.component'
+
+@NgModule({
+	imports:[BrowserModule],	// BrowserModule so application run correctly in the browser
+	declarations: [AppComponent],  // declarations Array declares the AppCompnent, so Angular can locate its selector
+	bootstrap: [AppComponent]      // bootstrap Array list AppComponent as the starting component of our application
+})
+export class AppModule { } 
+
+
+5) Ways to define Template
+a) inline template
+
+template: `				
+	<div><h1>{{pageTitle}}</h1>				
+	<div> My first Component </div>	
+	</div>				
+	`	
+
+
+OR
+template: "<h1>{{pageTitle}}</h1>
+
+b) Linked Template or External
+
+templateURL:'./product-list.component.html'
+
+
+@Component({
+	selector:'pm-products',						// MetaData
+	templateURL:'./product-list.component.html'
+	})
+
+export class ProductListComponents {}
+
+
+4) Importing one Selector Component to another
+
+
+@Component({
+	selector:'pm-root',						
+	template: `							
+		<div><h1>{{pageTitle}}</h1>				
+			<div> My first Component </div>			
+			<pm-products></pm-products>
+		</div>							
+		`							
+	})
+
+export class AppComponent {						
+	pageTitle : string = 'ACME Product Mangement';                 
+}
+
+Update in angular Module required is declaration of new Selector
+
+
+import {NgModule} from '@angular/core'
+import { BrowserModule} from '@angular/platform-browser'
+import {AppComponent} from './app.component'
+import {ProductListComponent} from './products/product-list.component'
+
+@NgModule({
+	imports:[BrowserModule],	
+	declarations: [AppComponent, ProductListComponent], 
+	bootstrap: [AppComponent]
+})
+export class AppModule { } 
+
+
+
+5) Interpolation
+	{{   }}
+
+Template
+
+{{'Title: ' + getTitle()}}
+
+
+Class File
+
+export class AppComponent{
+	pageTitle: string = 'Acme Product Management';
+	getTitle(): string {...};
+}
+
+
+6)Directives
+
+Directives are of two type 
+a)custom directive
+
+eg1) 
+
+@Component({
+	selector:'pm-root',						
+	template: `							
+		<div><h1>{{pageTitle}}</h1>				
+			<div> My first Component </div>			
+			<pm-products></pm-products>
+		</div>							
+		`							
+	})
+
+export class AppComponent {						
+	pageTitle : string = 'ACME Product Mangement';                 
+}
+
+eg2) 
+
+
+@Component({
+	selector:'pm-products',						// MetaData
+	templateURL:'./product-list.component.html'
+	})
+
+export class ProductListComponents {}
+
+b)built in directive
+*ngIf
+*ngFor
+
+
+7) Use of *ngIf
+
+
+---------------Product-list.component.html ----------
+
+<div class='table-responsive'>
+{{pageTitleNEW}}
+<button> Show Image </button>
+	<table *ngIf='products && products.length'>
+		<thead>
+			<tr>
+				<th><button> Show Image </button></th>
+				<th>Product</th>
+				<th>Code</th>
+				<th>5 star Rating</th>
+			</tr>
+		</thead>
+		<tbody>
+		<td>{product.imageUrl}</td>
+		<td>{{ product.productName }}</td>
+		<td>{{ product.productCode }}</td>
+		</tbody>
+</div>
+
+
+-------------------------------------------------
+
+-----------------product-list.component.ts------
+
+
+@Component({
+	selector:'pm-products',						// MetaData
+	templateURL:'./product-list.component.html'
+	})
+
+export class ProductListComponent {
+	pageTitleNEW: string = 'Product List';
+	products: any[] = [
+				{
+					"productId":2,
+					"PRODUCTcODE": "GDN-0023",
+					"startRating": 4.2
+				},
+				{
+					"productId":3,
+					"PRODUCTcODE": "GDN-0024",
+					"startRating": 5
+				}
+			  ];
+}
+
+8) use of *ngFor
+
+<tr *ngFor='let product of products'>
+	<td>{{ product.productName }}</td>
+	<td>{{ product.productCode }}</td>
+	<td>{{ product.starRating }}</td>
+</tr>
+
+
+9) Property Binding
+
+<img [src]='product.imgUrl'
+	[style.width.px]='imageWidth'
+	[style.margin.px]='imageMargin'/>
+
+
+When product-list.component.ts
+
+export class ProductListComponent {
+	pageTitleNEW: string = 'Product List';
+	imageWidth: number = 50;
+	imageMargin: number = 20;
+	products: any[] = [
+				{
+					"productId":2,
+					"PRODUCTcODE": "GDN-0023",
+					"startRating": 4.2
+				},
+				{
+					"productId":3,
+					"PRODUCTcODE": "GDN-0024",
+					"startRating": 5
+				}
+			  ];
+}
+
+
+10) Handling Event with Event Binding-- imp
+
+-----------product-list.component.html---------------
+
+<th><button (click)='toggleImage> {{showImage ? 'Hide':'Show'}} Image </button></th>
+
+<td><img *ngIf='showImage'[src]='product.imgUrl'
+	[style.width.px]='imageWidth'
+	[style.margin.px]='imageMargin'></td>
+------------------------------------------------
+
+
+When ----------------product-list.component.ts-----------------
+
+export class ProductListComponent {
+	pageTitleNEW: string = 'Product List';
+	imageWidth: number = 50;
+	imageMargin: number = 20;
+	showImage: boolean = false;
+	products: any[] = [
+				{
+					"productId":2,
+					"PRODUCTcODE": "GDN-0023",
+					"startRating": 4.2
+				},
+				{
+					"productId":3,
+					"PRODUCTcODE": "GDN-0024",
+					"startRating": 5
+				}
+			  ];
+
+	toggleImage(): void {
+		this.showImage = !this.showImage;	
+	}
+}
+------------------------------------------------------------
+
+
+11) Pipe Example
+
+{{product.code | lowercase}} --- it will transform all things in lower case
+{{product.price | currency: 'USD' : 'symbol':'1.2-2'}} // '1.2 -2.- means 1 digit to the left of decimal and not more than 2 dights to the right of demical
+
+
+
+12) Adding Styles and styleUrls to the components -- Encapsulating Component Style
+
+Inline Styles--
+
+@Component({
+	selector:'pm-products',
+	templateUrl:'./product-list.component.html',
+	styles:['thead {color:#3371AB7}']
+	})
+
+External Style based on component---
+
+@Component({
+	selector:'pm-products',
+	templateUrl:'./product-list.component.html',
+	styleUrls:['./product-list.component.css']
+	})
+
+12) Component Lifecycle Hooks (Very Important)
+
+OnInit: Perform component initilization, retrieve data
+OnChanges: Perform action after change to input properties
+OnDestroy: Perform cleanup
+
+13) OnInit use
+
+When ----------------product-list.component.ts-----------------
+
+import {Component, OnInit} from '@angular/core';
+
+export class ProductListComponent implements OnInit {
+	pageTitleNEW: string = 'Product List';
+	imageWidth: number = 50;
+	imageMargin: number = 20;
+	showImage: boolean = false;
+	products: any[] = [
+				{
+					"productId":2,
+					"PRODUCTcODE": "GDN-0023",
+					"startRating": 4.2
+				},
+				{
+					"productId":3,
+					"PRODUCTcODE": "GDN-0024",
+					"startRating": 5
+				}
+			  ];
+
+	toggleImage(): void {
+		this.showImage = !this.showImage;	
+	}
+
+	ngOnInit(): void {
+		console.log('In OnInit');
+	}
+}
+
+
+14) Building Custom Pipes
+
+import {Pipe, PipeTransform} from '@angular/core';
+
+@Pipe({
+	name: 'converttoSpaces'
+     )}
+
+export class ConvertToSpacesPipe implements PipeTransform{
+	transform(value : string, character: string): string {
+	}
+}
+
+----
+---Template--
+
+<td>{{ product.productCode | convertToSpaces: '-'}}</td>
+
+---Pipe--
+transform(value: string, character: string): string{
+	return value.replace(character,' ')
+}
+
+--- Module----
+
+@NgModule({
+	imports:[BrowserModule, FormsModule],	
+	declarations: [AppComponent, ProductListComponent, ConvertToSpacesPipe], 
+	bootstrap: [AppComponent]
+})
+
+
+
+15) onChange component && property binding
+
+import {Component ,  OnChanges} from '@angular/core'
+
+
+@Component({
+	selector:'pm-star',
+	templateUrl: './star.component.html',
+	styleUrls: ['./star.components.css']
+})
+
+export class StarComponent implements OnChanges{
+	rating: number = 4;
+	startWidth: number;
+
+	ngOnChanges(): void{
+	  this.starWidth =  this.rating *75/5;
+	}
+}
+
+----star.component.html---
+<div class='crop' [style.width.px]="starWidth" [title]="rating">
+	<div style="width: 75px">
+		<span class="fa fa-star"></span>
+		<span class="fa fa-star"></span>
+		<span class="fa fa-star"></span>
+		<span class="fa fa-star"></span>
+		<span class="fa fa-star"></span>
+	</div>
+
+</div>
+
+------------------
+16) Passing data to nested Compononet (@Input)
+
+---prdoduct-list.component.html---
+<pm-start [rating]= 'product.starRating'></pm-star>
+
+
+
+
+----- star.component.ts---
+
+@Component({
+	selector: 'pm-star',
+	templateURL: './star.component.html'
+})
+
+export class StarComponent impements OnChanges{
+	@Input() rating: number;
+	starWidth: number;
+
+	ngOnChanges(): void{
+	  this.starWidth =  this.rating *75/5;
+	}
+}
+
+
+
+17) passing data from nested componenent we use @Output (Rasising an Event (@Output))
+
+
+
+---- start.component.html----
+<div (click) = 'onClick()'>
+... starts....
+</div>
+
+
+
+----- start.components.ts----
+
+
+@Component({
+	selector: 'pm-star',
+	templateURL: './star.component.html'
+})
+
+export class StarComponent impements OnChanges{
+	@Input() rating: number;
+	starWidth: number;
+	@Output() ratingClicked: EventEmitter <string> = new EventEmitter<string>();
+	
+	ngOnChanges(): void{
+	  this.starWidth =  this.rating *75/5;
+	}
+
+	onClick(): void{
+	 this.ratingClicked.emit('clicked!');
+console.log(`The rating ${this.rating} was clicked`)
+	}
+
+}
+
+------ produdct-list.components.html---
+
+<td>
+	<pm-star [rating]= 'product.startRating'
+		  (ratingClicked) = 'onRatingClicked($event)'>
+	</pm-star>
+</td>
+
+---------- product-list.compnenet.ts----
+
+@Component({
+	selector: 'pm-products',
+	templateURL: './product-list.component.html'
+})
+
+export class ProductListComponent{
+	'onRatingClicked(message: string): void{
+		this.pageTitle = 'Product List: ' + message
+	
+	}
+}
+
+
+
+Flow,
+child click html
+child click function
+parenet click function
+parent html
+parent class event
+
+
+
+
+---------
+
+18) Building a service Three Steps
+
+1) Create a Service Class
+2) Define the metadata with a decorator
+3) import what we need
+
+
+19) Building and Registering a service
+
+Registering a service in -- Root Application
+
+--------- product.service.ts-----
+
+import {Injectable} from '@angular/core'
+@Injectable({
+	providedIn: 'root'
+})
+
+export class ProductService{
+	getProducts(): IProducts[]{
+	
+	return [
+				{
+					"productId":2,
+					"PRODUCTcODE": "GDN-0023",
+					"startRating": 4.2
+				},
+				{
+					"productId":3,
+					"PRODUCTcODE": "GDN-0024",
+					"startRating": 5
+				}
+			  ];
+	}
+
+}
+
+19) Inject the service
+
+------- product-list.components.ts----
+
+import {ProductService} from '/product.service'
+
+@Component({
+	selector: 'pm-products',
+	templateUrl: './product-list.component.html'
+})
+
+export class productListComponent{
+	constructor(private productService: ProductService){
+		
+		this.products = this.productService.getProducts();
+
+
+
+	}
+}
+
+
+
+20) Composing Operator --- Observable and Reactive Extension
+
+import {Observable , range} from 'rxjs';
+import {map, filter} from 'rxjs/operators';
+
+const source$ : Observable<number> = range(0,10);
+
+source$.pipe(map(x => x*3), filter( x => x%2 ===0)).subscribe(x => console.log(x));
+
+
+Result
+0
+6
+12,
+18
+24
+
+Promise VS Observales
+1)Promise:> Provides a single future value
+1) Observables:> Emits Multiple values over time
+2) Promise:> Not lazy
+2) Observables:> Lazy
+3) Promise:> Not cancellable
+3) Observale:> Cancellable , support map, filter, reduce and similar operators
+
+
+21) sending an HTTP Request
+
+
+------product.service.ts---------------------
+
+import {HttpClient} from '@angular/common/http'
+
+@Injectable({
+	providedIn: 'root'
+})
+
+export class productService {
+	private productUrl = 'www.myWebService.com/api/products';
+
+	constructor(private http: HttpClient{}
+
+	getProducts(): Observable<IProduct[]>{
+	 return  this.http.get<IProduct[]>(this.productUrl);
+	}
+
+}
+
+
+---------------app.module.ts------
+
+import {HttpClientModule} from '@angular/common/http';
+
+@NgModule({
+	imports: [BrowserModule, FormsModule, HttpClientModule],
+	declarations: [AppComponent, ProductListComponent, ConvertToSpacesPipe], 
+	bootstrap: [AppComponent]
+})
+
+
+})
+
+
+
+
+22) Exception handling for the Service
+
+------product.service.ts---------------------
+
+import {HttpClient ,  HttpErrorResponse} from '@angular/common/http'
+import {Observable} from 'rxjs';
+import {catchError , tap } from rxjs/operators';
+
+@Injectable({
+	providedIn: 'root'
+})
+
+export class productService {
+	private productUrl = 'www.myWebService.com/api/products';
+
+	constructor(private http: HttpClient{}
+
+	getProducts(): Observable<IProduct[]>{
+	 return  this.http.get<IProduct[]>(this.productUrl).pipe(	
+								tap(data => console.log('All: ' + JSON.stringify(data))),
+								catchError(this.handleError)
+	 );
+	}
+
+	private handleError(err: HttpErrorResponse){
+	
+	}
+
+}
+
+23) Routing in Angular
+
+
+
+---------------app.module.ts------
+
+import {HttpClientModule} from '@angular/common/http';
+import { RouteModule } from '@angular/router'
+
+@NgModule({
+	imports: [BrowserModule, FormsModule, HttpClientModule, 
+		  RoterModule.forRoot([
+		  { path: 'products', component: ProductListComponent},
+		  { path: 'products/:id', component: ProductDetailComponent},
+		  { path: 'Welcome', component: WelcomeComponent},
+		  { path: '', redirectTo:'Welcome', pathMatch: 'full'},
+		  { path: '**', redirectTo:'Welcome', pathMatch: 'full'}
+		])
+		],
+	declarations: [AppComponent, ProductListComponent, ConvertToSpacesPipe,WelcomeComponent], 
+	bootstrap: [AppComponent]
+})
+
+
+export class AppModulde {}

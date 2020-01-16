@@ -1,0 +1,141 @@
+React Hooks
+
+State Hooks
+1) a) useState returns a pair: the current state value and a function that lets you update it, You can call this function from an event handler or somewhere else. The only argument to useState is the initial state
+
+b) Hooks don’t work inside classes. But you can use them instead of writing classes.
+
+c) When would I use a Hook? If you write a function component and realize you need to add some state to it, previously you had to convert it to a class. Now you can use a Hook inside the existing function component. We’re going to do that right now!
+
+d) Don’t call Hooks inside loops, conditions, or nested functions
+
+import React, { useState } from 'react';
+
+function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+
+
+
+
+2) 
+import React, { useState } from 'react';
+export default function Greeting(props){
+const [name, setName] =  useState('Mary');
+
+	function handlenamechange(e){
+		setName(e.target.value)
+	}
+
+return(
+	<secttion>
+		<Row label = "Name">
+			<input value="name"
+				onChange={handleNameChange}
+			 />
+	</section>
+	)
+
+}
+
+3)  UseEffect Hooks
+
+const [width, setWidth] = useState(window.innerWidth);
+useEffect(() =>{					// it is like ComponentDidMount and ComponentDidUpdate
+	const handleResize = () => setWidth(window.innerWidth);
+	window.addEventListner('resize', handleResize);
+	return () =>{							// place to unsusbscribe
+	window.removeEventListner('resize',handleResize);
+	};
+
+});
+eg2
+import React, { useState, useEffect } from 'react';
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  // Similar to componentDidMount and componentDidUpdate:
+  useEffect(() => {
+    // Update the document title using the browser API
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+})
+
+
+
+3.1) we can use multipe useEffect functions
+
+useEffect(() =>{
+	document.title = name +'   ' + surname;
+})
+
+
+4) Important-- logic between two functions, extract a function to another function, after function Greeting write the Common function
+
+
+export default function Greeting(props){
+
+const [name, setName] =  useState('Mary');
+const  width = useWindowWidth()
+
+	function handlenamechange(e){
+		setName(e.target.value)
+	}
+
+return(
+	<secttion>
+		<Row label = "Name">
+			<input value="name"
+				onChange={handleNameChange}
+			 />
+		</Row>
+		<Row label = "Width">
+			{width}
+		</Row>
+	</section>
+	)
+
+}
+
+// custom Hooks, always start with 'use'
+function useWindowWidth(){ // function delared outside and can be called directly
+
+const [width, setWidth] = useState(window.innerWidth);
+useEffect(() =>{					
+	const handleResize = () => setWidth(window.innerWidth);
+	window.addEventListner('resize', handleResize);
+	return () =>{							
+	window.removeEventListner('resize',handleResize);
+	};
+
+});
+return width
+}
+
+Why did we return a function from our effect? This is the optional cleanup mechanism for effects. Every effect may return a function that cleans up after it. This lets us keep the logic for adding and removing subscriptions close to each other. They’re part of the same effect!
+
+When exactly does React clean up an effect? React performs the cleanup when the component unmounts. However, as we learned earlier, effects run for every render and not just once. This is why React also cleans up effects from the previous render before running the effects next time. We’ll discuss why this helps avoid bugs and how to opt out of this behavior in case it creates performance issues later below.
+
+
+
+

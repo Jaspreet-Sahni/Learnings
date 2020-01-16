@@ -1,0 +1,181 @@
+eg1) 
+
+const express = require('express')
+const app = express();
+
+app.get('/', function (req, res){
+
+res.send("hello from node");
+
+});
+
+
+addNewTestStep = (item: any) => {
+    const prevOrder = item.order;
+    const newItem = {...item};
+    newItem.tsDescription = `New step added (step ${prevOrder + 1} )`;
+    newItem.flag = 'Add';
+    newItem.testStepType = 'Functional';
+    if (item.functionId === '9999') {
+      newItem.functionId = null;
+    }
+    newItem.order = prevOrder + 1;
+    newItem.tsId = 'New_Step_Added' + newItem.order;
+    this.state.tcIdtestStepDataList.testStepDataList.find(ele => {
+      if (newItem.tsId === ele.tsId) {
+        newItem.tsId = newItem.tsId + '_' + newItem.order;
+      }
+    });
+
+
+app.listen(3000, function(){})
+
+
+2) Implement HTTP GET 
+
+const express = require('express')
+const app = express()
+const bookRouter = express.Router();
+
+bookRouter.route('/books').get((req, res) =>{
+
+	const response ={hello: 'This is my API'}
+	res.json(response);    // res.json is used to send the JSON
+});
+
+app.use('/api',bookRouter);
+app.get('/', function (req, res){
+
+res.send("hello from node");    // res.send is used to send the text
+
+});
+app.listen(3000, function(){})
+
+----Output----
+
+When user click on 
+
+localhost://3000/api/books
+
+{hello: 'This is my API'}
+
+
+
+3) Mongo Db
+
+a) to import Book Data into your mongoDB database
+b) make sure mongoDB is running
+c) run 'mongo bookAPI < booksJson.js' from cmd
+d) it will create a bookAPI database
+-- books.json.js
+
+db.books.insert([
+	{
+	title:'War and Peace',
+	genre: 'Historical',
+	author: 'lev'
+	read: false
+	},
+	{
+	title:'LES and Peace',
+	genre: 'Historical',
+	author: 'Victor'
+	read: false
+	}
+]);
+
+
+4) Mongoose connection
+
+----app.js---
+
+const express = require('express')
+const mongoose = require('mongoose')
+
+const app = express();
+
+const db = mongoose.connect('mongodb://localhost/bookAPI');
+
+const bookRouter = express.Router();
+
+const Book = require('./models/bookModel')
+
+bookRouter.route('/books').get((req, res) =>{
+
+	Book.find((err,books) =>{
+	  if(err){
+		return res.send(err);
+		}
+	   return res.json(books);
+	
+	});
+
+
+});
+
+app.use('/api', bookRouter)
+
+app.listen(3000, function(){})
+
+
+
+------bookModel.js-------------
+
+const mongose = require('mongoose');
+const {Schema} = mongoose;
+
+const bookModel = new Schema(
+	{
+	title: {type: String},
+	titleauthor: {type: String},
+	genre: {type: String},
+	reac: {type: Boolean, default: false},
+	}
+);
+
+module.exports = mongoose.model('Book', bookModel);
+
+
+
+5) Filtering with a query string use of query and find
+
+const bookRouter = express.Router();
+
+const Book = require('./models/bookModel')
+
+bookRouter.route('/books').get((req, res) =>{
+	const query = {genre: 'Heaven'};  // way 1, show the results for genre having Heaven as string
+	const {query} = req;  // way 2, show the results for create a new Object eg: genre having Heaven as string
+	Book.find(query, (err,books) =>{
+	  if(err){
+		return res.send(err);
+		}
+	   return res.json(books);
+	
+	});
+
+});
+
+
+// url used localhost:3000/api/books?genre=Heaven
+will display all records with genre result having Heaven
+
+
+
+6) filtering a single item 
+
+bookRouter.route('/books/:bookId').get((req,res) =>{
+	Book.findById(req.params.bookId, (err, book) =>{
+	 if(err){
+		return res.send(err);
+		}
+		return res.json(book);
+	})
+});
+
+app.use('/api',bookRouter)
+
+in browser
+/ url used localhost:3000/api/books?11
+will display the record having 11 id
+

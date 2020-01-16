@@ -1,0 +1,71 @@
+1) lazy-load
+
+Best Way to Implement Code Splitting is 
+1) dynamic import()
+2) React.lazy  --- function lets you render a dynamic import as a regular component
+3) Suspense
+
+a) dynamic Import
+Before
+import { add } from './math';
+console.log(add(16, 26));
+
+After
+import("./math").then(math => {
+  console.log(math.add(16, 26));
+});
+
+b) React.Lazy
+
+Before
+import OtherComponent from './OtherComponent';
+
+After
+const OtherComponent = React.lazy(() => import('./OtherComponent'));
+
+React.lazy takes a function that must call a dynamic import(),
+This must return a Promise which resolves to a module with a default export containing a React component.
+
+b) Suspense-- React Componentr should be wrapped inside a suspense Component ,which allow us to show some 
+fallback content ( such as loading indicator) while waiting for the lazy component to load.
+You can even wrap multiple lazy components with a single Suspense component.
+
+const OtherComponent = React.lazy(() => import('./OtherComponent'));
+
+function MyComponent() {
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <OtherComponent />
+      </Suspense>
+    </div>
+  );
+}
+
+1.2) Route Based Code Splitting
+
+Route Based Code splitting helps as only that component bundle will be rendered and loaded 
+that will be required
+
+
+import {BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, {Suspense, lazy }from 'react';
+
+const Home = lazy(() => import ('./routes/Home');
+const About = lazy(() => import ('./routes/About');
+
+Const App = () => (
+  <Router>
+    <Suspense fallback ={<div> Loading .... </div>}
+      <Switch>
+          <Route exact path="/" component={Home}>
+          <Route exact path="/about" component={About}>
+      </Switch>
+     </Suspense>
+   </Router>
+
+)
+
+
+
+
